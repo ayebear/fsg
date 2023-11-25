@@ -29,7 +29,30 @@ impl Sandbox {
         }
     }
 
-    pub fn simulate(&mut self) {}
+    pub fn simulate(&mut self) {
+        for y in (0..self.size.y).rev() {
+            for x in 0..self.size.x {
+                let i = y * self.size.x + x;
+                let element = self.elements[i as usize];
+                match element {
+                    Element::Sand => {
+                        let ii = (y + 1).rem_euclid(self.size.y) * self.size.x + x;
+                        let element_below = self.elements[ii as usize];
+                        match element_below {
+                            Element::Empty => {
+                                // move down
+                                self.elements.swap(i as usize, ii as usize);
+                            }
+                            _ => {
+                                // collide
+                            }
+                        }
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
 
     pub fn render(&self, image: &mut Image) {
         self.elements.iter().enumerate().for_each(|(i, element)| {

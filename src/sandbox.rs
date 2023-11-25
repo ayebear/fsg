@@ -17,20 +17,28 @@ impl Sandbox {
         }
     }
 
-    pub fn draw(&mut self, position: IVec2, element: Element) {
+    pub fn paint(&mut self, position: IVec2, element: Element) {
         for y in position.y - BRUSH_RADIUS..position.y + BRUSH_RADIUS {
             for x in position.x - BRUSH_RADIUS..position.x + BRUSH_RADIUS {
-                if x < 0
-                    || x >= self.size.x
-                    || y < 0
-                    || y >= self.size.y
-                    || position.distance_squared(IVec2::new(x, y)) > BRUSH_RADIUS * BRUSH_RADIUS
-                {
+                if position.distance_squared(IVec2::new(x, y)) > BRUSH_RADIUS * BRUSH_RADIUS {
                     continue;
                 }
-                let i = (y * self.size.x + x) as usize;
-                self.elements[i] = element;
+                let i = y.rem_euclid(self.size.y) * self.size.x + x.rem_euclid(self.size.x);
+                self.elements[i as usize] = element;
             }
         }
+    }
+
+    pub fn simulate(&mut self) {}
+
+    pub fn render(&self, image: &mut Image) {
+        self.elements.iter().enumerate().for_each(|(i, element)| {
+            let color = element.get_color();
+            let img_i = i * 4;
+            image.data[img_i] = color.0;
+            image.data[img_i + 1] = color.1;
+            image.data[img_i + 2] = color.2;
+            image.data[img_i + 3] = 255;
+        });
     }
 }

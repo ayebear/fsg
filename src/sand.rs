@@ -1,7 +1,7 @@
 use crate::{
     consts::{HEIGHT, WIDTH},
     element::Element,
-    utils::Sandbox,
+    sandbox::Sandbox,
 };
 use bevy::{
     prelude::*,
@@ -65,26 +65,17 @@ fn input(
     // Use mouse position to draw/erase
     if mouse_input.pressed(MouseButton::Left) {
         // todo: store a tool with element and use keyboard 1-9 to switch tools
-        sandbox.draw(position, Element::Sand);
+        sandbox.paint(position, Element::Sand);
     } else if mouse_input.pressed(MouseButton::Right) {
-        sandbox.draw(position, Element::Empty);
+        sandbox.paint(position, Element::Empty);
     }
 }
 
-fn simulate(mut sandbox: ResMut<Sandbox>) {}
+fn simulate(mut sandbox: ResMut<Sandbox>) {
+    sandbox.simulate();
+}
 
 fn render(sandbox: Res<Sandbox>, mut images: ResMut<Assets<Image>>) {
     let image = images.get_mut(sandbox.image_handle.clone()).unwrap();
-    sandbox
-        .elements
-        .iter()
-        .enumerate()
-        .for_each(|(i, element)| {
-            let color = element.get_color();
-            let img_i = i * 4;
-            image.data[img_i] = color.0;
-            image.data[img_i + 1] = color.1;
-            image.data[img_i + 2] = color.2;
-            image.data[img_i + 3] = 255;
-        });
+    sandbox.render(image);
 }

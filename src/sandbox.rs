@@ -6,6 +6,7 @@ pub struct Sandbox {
     pub size: IVec2,
     pub elements: Vec<Element>,
     pub image_handle: Handle<Image>,
+    pub tool: Element,
 }
 
 impl Sandbox {
@@ -14,6 +15,7 @@ impl Sandbox {
             size: IVec2::new(width as i32, height as i32),
             elements: vec![Element::Empty; width as usize * height as usize],
             image_handle,
+            tool: Element::Sand,
         }
     }
 

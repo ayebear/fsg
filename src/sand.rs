@@ -13,8 +13,10 @@ pub struct SandPlugin;
 
 impl Plugin for SandPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup)
-            .add_systems(Update, (input, simulate, render).chain());
+        app.add_systems(Startup, setup).add_systems(
+            Update,
+            (input_keyboard, input_mouse, simulate, render).chain(),
+        );
     }
 }
 
@@ -40,12 +42,20 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
     });
 }
 
-fn input(
+fn input_keyboard(mut sandbox: ResMut<Sandbox>, keyboard_input: Res<Input<KeyCode>>) {
+    if keyboard_input.just_pressed(KeyCode::Key1) {
+        sandbox.tool = Element::Sand;
+    }
+    if keyboard_input.just_pressed(KeyCode::Key2) {
+        sandbox.tool = Element::Wall;
+    }
+}
+
+fn input_mouse(
     mut sandbox: ResMut<Sandbox>,
     q_windows: Query<&Window, With<PrimaryWindow>>,
     q_cameras: Query<(&Camera, &GlobalTransform)>,
     mouse_input: Res<Input<MouseButton>>,
-    keyboard_input: Res<Input<KeyCode>>,
 ) {
     // Get mapped mouse position
     let window = q_windows.single();
@@ -64,8 +74,8 @@ fn input(
     .as_ivec2();
     // Use mouse position to draw/erase
     if mouse_input.pressed(MouseButton::Left) {
-        // todo: store a tool with element and use keyboard 1-9 to switch tools
-        sandbox.paint(position, Element::Sand);
+        let element = sandbox.tool;
+        sandbox.paint(position, element);
     } else if mouse_input.pressed(MouseButton::Right) {
         sandbox.paint(position, Element::Empty);
     }

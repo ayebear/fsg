@@ -1,0 +1,38 @@
+[package]
+name = "fsg"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bevy = { version = "0.12", default-features = false, features = [
+	"bevy_asset",
+	"bevy_winit",
+	"bevy_core_pipeline",
+	"bevy_render",
+	"bevy_sprite",
+	"multi-threaded",
+	"png",
+	"x11",
+	"dynamic_linking",
+	"file_watcher",
+] }
+
+[lints.clippy]
+# Good for Bevy dependency injected functions
+too_many_arguments = "allow"
+
+# Enable a small amount of optimization in debug mode
+[profile.dev]
+opt-level = 1
+
+# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
+[profile.dev.package."*"]
+opt-level = 3
+
+# Enable this for final production builds
+# [profile.release]
+# lto = true
+# strip = true
+# codegen-units = 1

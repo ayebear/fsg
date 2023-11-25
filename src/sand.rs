@@ -6,6 +6,7 @@ use crate::{
 use bevy::{
     prelude::*,
     render::render_resource::{Extent3d, TextureDimension, TextureFormat},
+    window::PrimaryWindow,
 };
 
 pub struct SandPlugin;
@@ -13,7 +14,7 @@ pub struct SandPlugin;
 impl Plugin for SandPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, setup)
-            .add_systems(Update, (simulate, render).chain());
+            .add_systems(Update, (input, simulate, render).chain());
     }
 }
 
@@ -37,6 +38,36 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
         texture: image_handle,
         ..default()
     });
+}
+
+fn input(
+    mut sandbox: ResMut<Sandbox>,
+    q_windows: Query<&Window, With<PrimaryWindow>>,
+    q_cameras: Query<(&Camera, &GlobalTransform)>,
+    mouse_input: Res<Input<MouseButton>>,
+    keyboard_input: Res<Input<KeyCode>>,
+) {
+    // Get mapped mouse position
+    let window = q_windows.single();
+    let (camera, camera_transform) = q_cameras.single();
+    let Some(mouse_position) = window.cursor_position() else {
+        return;
+    };
+    let Some(position) = camera.viewport_to_world_2d(camera_transform, mouse_position) else {
+        return;
+    };
+    let position = Vec2::new(
+        position.x + WIDTH as f32 / 2.,
+        HEIGHT as f32 - (position.y + HEIGHT as f32 / 2.),
+    )
+    .round()
+    .as_ivec2();
+    // Use mouse position to draw/erase
+    if mouse_input.pressed(MouseButton::Left) {
+        println!("draw {}", position);
+    } else if mouse_input.pressed(MouseButton::Right) {
+        println!("erase {}", position);
+    }
 }
 
 fn simulate(mut sandbox: ResMut<Sandbox>) {}

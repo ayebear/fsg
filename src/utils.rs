@@ -21,9 +21,9 @@ impl Sandbox {
         for y in position.y - BRUSH_RADIUS..position.y + BRUSH_RADIUS {
             for x in position.x - BRUSH_RADIUS..position.x + BRUSH_RADIUS {
                 if x < 0
-                    || x > self.size.x
+                    || x >= self.size.x
                     || y < 0
-                    || y > self.size.y
+                    || y >= self.size.y
                     || position.distance_squared(IVec2::new(x, y)) > BRUSH_RADIUS * BRUSH_RADIUS
                 {
                     continue;

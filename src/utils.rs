@@ -16,4 +16,10 @@ impl Sandbox {
             image_handle,
         }
     }
+
+    pub fn draw(&mut self, position: IVec2, element: Element) {
+        let position = position.clamp(IVec2::ZERO, self.size.as_ivec2()).as_uvec2();
+        let i = (position.y * self.size.x + position.x) as usize;
+        self.elements[i] = element;
+    }
 }

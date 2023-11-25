@@ -64,9 +64,10 @@ fn input(
     .as_ivec2();
     // Use mouse position to draw/erase
     if mouse_input.pressed(MouseButton::Left) {
-        println!("draw {}", position);
+        // todo: store a tool with element and use keyboard 1-9 to switch tools
+        sandbox.draw(position, Element::Sand);
     } else if mouse_input.pressed(MouseButton::Right) {
-        println!("erase {}", position);
+        sandbox.draw(position, Element::Empty);
     }
 }
 

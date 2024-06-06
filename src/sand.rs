@@ -37,8 +37,7 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
         RenderAssetUsages::default(),
     );
     let image_handle = images.add(image);
-    let mut sandbox = Sandbox::new(WIDTH, HEIGHT, image_handle.clone());
-    sandbox.elements[10000] = Element::Wall;
+    let sandbox = Sandbox::new(WIDTH, HEIGHT, image_handle.clone());
     commands.insert_resource(sandbox);
     commands.spawn(SpriteBundle {
         texture: image_handle,

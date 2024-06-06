@@ -5,7 +5,10 @@ use crate::{
 };
 use bevy::{
     prelude::*,
-    render::render_resource::{Extent3d, TextureDimension, TextureFormat},
+    render::{
+        render_asset::RenderAssetUsages,
+        render_resource::{Extent3d, TextureDimension, TextureFormat},
+    },
     window::PrimaryWindow,
 };
 
@@ -31,6 +34,7 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
         TextureDimension::D2,
         &[255, 0, 0, 255],
         TextureFormat::Rgba8UnormSrgb,
+        RenderAssetUsages::default(),
     );
     let image_handle = images.add(image);
     let mut sandbox = Sandbox::new(WIDTH, HEIGHT, image_handle.clone());
@@ -42,11 +46,11 @@ fn setup(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
     });
 }
 
-fn input_keyboard(mut sandbox: ResMut<Sandbox>, keyboard_input: Res<Input<KeyCode>>) {
-    if keyboard_input.just_pressed(KeyCode::Key1) {
+fn input_keyboard(mut sandbox: ResMut<Sandbox>, keyboard_input: Res<ButtonInput<KeyCode>>) {
+    if keyboard_input.just_pressed(KeyCode::Digit1) {
         sandbox.tool = Element::Sand;
     }
-    if keyboard_input.just_pressed(KeyCode::Key2) {
+    if keyboard_input.just_pressed(KeyCode::Digit2) {
         sandbox.tool = Element::Wall;
     }
 }
@@ -55,7 +59,7 @@ fn input_mouse(
     mut sandbox: ResMut<Sandbox>,
     q_windows: Query<&Window, With<PrimaryWindow>>,
     q_cameras: Query<(&Camera, &GlobalTransform)>,
-    mouse_input: Res<Input<MouseButton>>,
+    mouse_input: Res<ButtonInput<MouseButton>>,
 ) {
     // Get mapped mouse position
     let window = q_windows.single();
